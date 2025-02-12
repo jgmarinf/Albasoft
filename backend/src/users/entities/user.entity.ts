@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -9,7 +10,7 @@ import {
 } from 'typeorm';
 import { Project } from '../../projects/entities/project.entity';
 
-@Entity()
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -28,8 +29,8 @@ export class User {
 
   // Relación con admin (self-referencing)
   @ManyToOne(() => User, (user) => user.admins, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'admin_id' })
   admin: User;
-
   @OneToMany(() => User, (user) => user.admin, { onDelete: 'CASCADE' })
   admins: User[];
 
