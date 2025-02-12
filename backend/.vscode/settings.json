@@ -1,0 +1,25 @@
+{
+  /* BIOME / PRETTIER and ESLINT  */
+  "biome.enabled": false,
+  "editor.formatOnSave": true,
+  "[javascript][typescript][javascriptreact][typescriptreact][json][jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[css]": {
+    "editor.defaultFormatter": "vscode.css-language-features",
+    "editor.codeActionsOnSave": {
+      // pending configuration, probably with stylelint
+    }
+  },
+  "[html]": {
+    // "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      // pending configuration, probably with stylelint
+    }
+  },
+  "cSpell.words": ["Linkedin", "tailwindcss", "turbopack", "zustand"]
+}
