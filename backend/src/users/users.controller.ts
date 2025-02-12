@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UsersService } from './users.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { CreateAdminDto } from './dto/create-admin.dto';
+import { CreateUserSelfRegistrationDto } from './dto/create-user-self-registration.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
@@ -10,6 +20,18 @@ export class UsersController {
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
+  }
+
+  @Post('register/admin')
+  registerAdmin(@Body() createAdminDto: CreateAdminDto) {
+    return this.usersService.createAdmin(createAdminDto);
+  }
+
+  @Post('register/user')
+  selfRegister(
+    @Body() createUserSelfRegistrationDto: CreateUserSelfRegistrationDto,
+  ) {
+    return this.usersService.selfRegister(createUserSelfRegistrationDto);
   }
 
   @Get()

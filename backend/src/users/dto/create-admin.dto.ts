@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateUserDto {
+export class CreateAdminDto {
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -11,4 +11,8 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  claveSecreta: string; // Este campo se valida pero no se guarda en la base de datos
 }
