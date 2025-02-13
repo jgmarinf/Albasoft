@@ -153,15 +153,19 @@ export default function AuthForm({ type, role = "user" }: AuthFormProps) {
             </label>
             <input
               id="claveSecreta"
-              name="claveSecreta"
+              {...register("claveSecreta")}
               type="password"
-              required
               className={`w-full px-4 py-2 border rounded-md focus:outline-none ${
-                errors.password
+                errors.claveSecreta
                   ? "border-red-500"
                   : "focus:ring-2 focus:ring-blue-500"
               }`}
             />
+            {errors.claveSecreta && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.claveSecreta.message}
+              </p>
+            )}
           </div>
         )}
 
