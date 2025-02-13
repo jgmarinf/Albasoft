@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
-export class CreateAdminDto {
+export class RegisterUserDto {
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -13,7 +13,6 @@ export class CreateAdminDto {
   @MinLength(8)
   password: string;
 
-  @IsNotEmpty()
-  @IsString()
-  claveSecreta: string; // Este campo se valida pero no se guarda en la base de datos
+  @IsEmail()
+  adminEmail: string;
 }

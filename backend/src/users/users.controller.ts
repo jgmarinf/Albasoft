@@ -7,8 +7,6 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { CreateAdminDto } from './dto/create-admin.dto';
-import { CreateUserSelfRegistrationDto } from './dto/create-user-self-registration.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
@@ -22,25 +20,9 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Post('register/admin')
-  registerAdmin(@Body() createAdminDto: CreateAdminDto) {
-    return this.usersService.createAdmin(createAdminDto);
-  }
-
-  @Post('register/user')
-  selfRegister(
-    @Body() createUserSelfRegistrationDto: CreateUserSelfRegistrationDto,
-  ) {
-    return this.usersService.selfRegister(createUserSelfRegistrationDto);
-  }
-
   @Get()
-  async findAll() {
-    const users = await this.usersService.findAll();
-    return users.map((user) => {
-      const { password, ...result } = user;
-      return result;
-    });
+  findAll() {
+    return this.usersService.findAll();
   }
 
   @Get(':id')
