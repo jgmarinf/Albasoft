@@ -33,7 +33,11 @@ export class AuthService {
       password: hashedPassword,
       role: 'admin' as const,
     };
-    return await this.usersService.create(userData);
+    await this.usersService.create(userData);
+    return {
+      email: registerAdminDto.email,
+      message: 'Administrador creado correctamente',
+    };
   }
 
   async registerUser(registerUserDto: RegisterUserDto) {
@@ -60,7 +64,11 @@ export class AuthService {
       admin: { id: admin.id }, // Asignar la relación con el admin
     };
 
-    return await this.usersService.create(userData);
+    await this.usersService.create(userData);
+    return {
+      email: registerUserDto.email,
+      message: 'Usuario creado correctamente',
+    };
   }
 
   async login(loginDto: LoginDto) {
