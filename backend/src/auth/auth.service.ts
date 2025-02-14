@@ -3,14 +3,19 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { UsersService } from './../users/users.service';
+import { LoginDto } from './dto/login-dto';
 import { RegisterAdminDto } from './dto/register-admin-dto';
 import { RegisterUserDto } from './dto/register-user-dto';
 import { Hashing } from './hashing';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async registerAdmin(registerAdminDto: RegisterAdminDto) {
     const user = await this.usersService.findOneByEmail(registerAdminDto.email);
@@ -56,5 +61,35 @@ export class AuthService {
     };
 
     return await this.usersService.create(userData);
+  }
+
+  async login(loginDto: LoginDto) {
+    const user = await this.usersService.findOneByEmail(loginDto.email);
+    if (!user) {
+      throw new UnauthorizedException('El correo no es valido');
+    }
+    const isPasswordValid = await Hashing.verifyPassword(
+      loginDto.password,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('La contraseña no es correcta');
+    }
+
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
+
+    const token = await this.jwtService.signAsync(payload);
+
+    return {
+      token,
+      user: {
+        email: user.email,
+        role: user.role,
+      },
+    };
   }
 }

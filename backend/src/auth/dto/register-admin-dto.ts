@@ -1,6 +1,8 @@
+import { Transform } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class RegisterAdminDto {
+  @Transform(({ value }) => value.trim())
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -8,6 +10,7 @@ export class RegisterAdminDto {
   @IsEmail()
   email: string;
 
+  @Transform(({ value }) => value.trim())
   @IsNotEmpty()
   @IsString()
   @MinLength(8)
