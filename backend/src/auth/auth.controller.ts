@@ -33,4 +33,8 @@ export class AuthController {
   ) {
     return req.user;
   }
+  @Get('test')
+  test() {
+    return 'test';
+  }
 }
