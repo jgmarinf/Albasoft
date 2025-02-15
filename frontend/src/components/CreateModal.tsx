@@ -11,15 +11,22 @@ import {
   type EditUserFormData,
 } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { FiCheck } from "react-icons/fi";
 
 interface CreateModalProps {
   isOpen: boolean;
   onClose: () => void;
-  type: "user" | "project";
+  type: "user" | "project" | "add-users";
   isEdit?: boolean;
   initialData?: any;
   onSubmit: (data: any) => void;
+  users?: Array<{
+    id: number;
+    name: string;
+    email: string;
+  }>;
 }
 
 export default function CreateModal({
@@ -29,12 +36,15 @@ export default function CreateModal({
   isEdit = false,
   initialData = {},
   onSubmit,
+  users = [],
 }: CreateModalProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
+    setValue,
   } = useForm<
     | CreateUserFormData
     | CreateProjectFormData
@@ -58,6 +68,24 @@ export default function CreateModal({
       : undefined,
   });
 
+  const [isOpenDropdown, setIsOpen] = useState(false);
+  const selectedUsers = watch("users") || [];
+
+  const handleUserSelect = (userId: number) => {
+    if (selectedUsers.includes(userId.toString())) {
+      setValue(
+        "users",
+        selectedUsers.filter((id) => id !== userId.toString())
+      );
+    } else {
+      setValue("users", [...selectedUsers, userId.toString()]);
+    }
+  };
+
+  const handleSubmitForm = (data: any) => {
+    onSubmit(data);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -65,11 +93,62 @@ export default function CreateModal({
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">
           {isEdit ? "Editar" : "Crear"}{" "}
-          {type === "user" ? "Usuario" : "Proyecto"}
+          {type === "user"
+            ? "Usuario"
+            : type === "project"
+            ? "Proyecto"
+            : "Usuarios al proyecto"}
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          {type === "user" ? (
+          {type === "add-users" ? (
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">
+                Seleccionar usuarios
+              </label>
+              <div className="relative">
+                <div
+                  className="border rounded p-2 cursor-pointer"
+                  onClick={() => setIsOpen(!isOpenDropdown)}
+                >
+                  {selectedUsers.length > 0
+                    ? `${selectedUsers.length} usuarios seleccionados`
+                    : "Haz clic para seleccionar usuarios"}
+                </div>
+
+                {isOpenDropdown && (
+                  <div className="absolute z-10 w-3/2 mt-1 bg-white border rounded shadow-lg max-h-60 overflow-y-auto">
+                    {users.map((user) => (
+                      <label
+                        key={user.id}
+                        className="flex items-center p-2 hover:bg-gray-50 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          value={user.id}
+                          {...register("users")}
+                          className="hidden"
+                        />
+                        <div className="w-5 h-5 border rounded mr-2 flex items-center justify-center">
+                          {selectedUsers.includes(user.id.toString()) && (
+                            <FiCheck className="text-blue-600" />
+                          )}
+                        </div>
+                        <span>
+                          {user.name} ({user.email})
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {errors.users && (
+                <p className="text-red-500 text-sm mt-1">
+                  {(errors as any).users.message}
+                </p>
+              )}
+            </div>
+          ) : type === "user" ? (
             <>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Nombre</label>
