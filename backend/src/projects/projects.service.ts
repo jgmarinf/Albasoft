@@ -20,19 +20,17 @@ export class ProjectsService {
     return await this.projectRepository.save(project);
   }
 
-  /*   async findAdminProjects(adminId: string) {
+  async findAdminProjects(adminId: string) {
     return this.projectRepository.find({
       where: { admin: { id: adminId } },
-      relations: ['users', 'tasks'],
     });
   }
 
   async findUserProjects(userId: string) {
     return this.projectRepository.find({
       where: { users: { id: userId } },
-      relations: ['admin', 'tasks'],
     });
-  } */
+  }
 
   update(id: string, updateProjectDto: UpdateProjectDto) {
     return `This action updates a #${id} project`;

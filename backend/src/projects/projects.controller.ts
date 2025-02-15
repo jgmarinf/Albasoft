@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -32,18 +33,23 @@ export class ProjectsController {
     return this.projectsService.create(createProjectDto, req.user.sub);
   }
 
-  /*   @Get('admin')
-  @Roles('admin')
-  async getAdminProjects(@CurrentUser() user: User) {
-    console.log(user);
-    return this.projectsService.findAdminProjects(user.id);
+  @Get('admin')
+  @Roles(Role.ADMIN)
+  async getAdminProjects(
+    @Req()
+    req: Request & { user: { sub: string; email: string; role: string } },
+  ) {
+    return this.projectsService.findAdminProjects(req.user.sub);
   }
 
   @Get('user')
-  @Roles('user')
-  async getUserProjects(@CurrentUser() user: User) {
-    return this.projectsService.findUserProjects(user.id);
-  } */
+  @Roles(Role.USER)
+  async getUserProjects(
+    @Req()
+    req: Request & { user: { sub: string; email: string; role: string } },
+  ) {
+    return this.projectsService.findUserProjects(req.user.sub);
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
