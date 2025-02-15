@@ -2,11 +2,13 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   Param,
   Patch,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectsService } from './projects.service';
@@ -16,19 +18,28 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectsService.create(createProjectDto);
+  @UseGuards(AuthGuard)
+  create(
+    @Body() createProjectDto: CreateProjectDto,
+    @Req()
+    req: Request & { user: { sub: string; email: string; role: string } },
+  ) {
+    console.log(req.user);
+    return this.projectsService.create(createProjectDto, req.user.sub);
   }
 
-  @Get()
-  findAll() {
-    return this.projectsService.findAll();
+  /*   @Get('admin')
+  @Roles('admin')
+  async getAdminProjects(@CurrentUser() user: User) {
+    console.log(user);
+    return this.projectsService.findAdminProjects(user.id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectsService.findOne(id);
-  }
+  @Get('user')
+  @Roles('user')
+  async getUserProjects(@CurrentUser() user: User) {
+    return this.projectsService.findUserProjects(user.id);
+  } */
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
