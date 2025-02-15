@@ -26,10 +26,8 @@ export class ProjectsController {
   @Roles(Role.ADMIN)
   create(
     @Body() createProjectDto: CreateProjectDto,
-    @Req()
-    req: Request & { user: { sub: string; email: string; role: string } },
+    @Req() req: Request & { user: { sub: string } },
   ) {
-    console.log(req.user);
     return this.projectsService.create(createProjectDto, req.user.sub);
   }
 

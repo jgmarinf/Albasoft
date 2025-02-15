@@ -29,7 +29,10 @@ export class User {
   password: string;
 
   // Relación con admin (self-referencing)
-  @ManyToOne(() => User, (user) => user.admins, { onDelete: 'SET NULL' })
+  @ManyToOne(() => User, (admin) => admin.admins, {
+    nullable: true,
+    eager: true, // Para cargar automáticamente la relación
+  })
   @JoinColumn({ name: 'admin_id' })
   admin: User;
   @OneToMany(() => User, (user) => user.admin, { onDelete: 'CASCADE' })
