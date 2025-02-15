@@ -6,7 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { Role } from 'src/common/enums/role.enum';
+import { RolesGuard } from './../auth/guards/roles.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
@@ -16,8 +22,14 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  create(
+    @Body() createUserDto: CreateUserDto,
+    @Req()
+    req: Request & { user: { sub: string; email: string; role: string } },
+  ) {
+    return this.usersService.create(createUserDto, req.user.sub);
   }
 
   @Get()

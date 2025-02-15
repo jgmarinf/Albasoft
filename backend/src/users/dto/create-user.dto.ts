@@ -1,13 +1,15 @@
-import { Role } from 'src/common/enums/role.enum';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateUserDto {
+  @IsNotEmpty()
+  @IsString()
   name: string;
 
+  @IsNotEmpty()
+  @IsEmail()
   email: string;
 
+  @IsNotEmpty()
+  @IsString()
   password: string;
-
-  role: Role;
-
-  admin?: { id: string };
 }

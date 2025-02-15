@@ -65,7 +65,8 @@ export class AuthService {
       admin: { id: admin.id }, // Asignar la relación con el admin
     };
 
-    await this.usersService.create(userData);
+    const adminId = admin.id; // Obtener ID del admin desde el usuario autenticado
+    await this.usersService.create(userData, adminId);
     return {
       email: registerUserDto.email,
       message: 'Usuario creado correctamente',

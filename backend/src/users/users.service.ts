@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon from 'argon2';
+import { Hashing } from 'src/auth/hashing';
 import { Role } from 'src/common/enums/role.enum';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -12,14 +14,34 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   // Simulación temporal de ID de administrador (quemado)
   // private readonly TEMP_ADMIN_ID = '0119b370-0653-4506-98cc-1728aee0b933'; // Reemplazar con un UUID válido
 
-  async create(createUserDto: CreateUserDto) {
-    const user = this.userRepository.create(createUserDto);
-    return await this.userRepository.save(user);
+  async create(createUserDto: CreateUserDto, adminId?: string) {
+    const user = await this.userRepository.findOne({
+      where: { email: createUserDto.email },
+    });
+    if (user) {
+      throw new BadRequestException('El correo ya está registrado');
+    }
+
+    const hashedPassword = await Hashing.hashPassword(createUserDto.password);
+    const userData = {
+      ...createUserDto,
+      password: hashedPassword,
+      role: Role.USER,
+      adminId: adminId,
+    };
+    const userEntity = this.userRepository.create(userData);
+    await this.userRepository.save(userEntity);
+
+    return {
+      email: userData.email,
+      message: 'Administrador creado correctamente',
+    };
   }
 
   async findOneByEmail(email: string) {
