@@ -1,3 +1,5 @@
+import { Role } from 'src/common/enums/role.enum';
+
 export class CreateUserDto {
   name: string;
 
@@ -5,7 +7,7 @@ export class CreateUserDto {
 
   password: string;
 
-  role: 'admin' | 'user';
+  role: Role;
 
   admin?: { id: string };
 }

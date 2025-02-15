@@ -1,3 +1,4 @@
+import { Role } from 'src/common/enums/role.enum';
 import {
   Column,
   Entity,
@@ -18,13 +19,13 @@ export class User {
   @Column()
   name: string;
 
-  @Column({ type: 'text', default: 'user' })
-  role: 'admin' | 'user';
+  @Column({ type: 'enum', default: Role.USER, enum: Role })
+  role: Role;
 
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
   // Relación con admin (self-referencing)

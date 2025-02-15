@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from 'src/common/enums/role.enum';
 import { UsersService } from './../users/users.service';
 import { LoginDto } from './dto/login-dto';
 import { RegisterAdminDto } from './dto/register-admin-dto';
@@ -31,7 +32,7 @@ export class AuthService {
     const userData = {
       ...registerAdminDto,
       password: hashedPassword,
-      role: 'admin' as const,
+      role: Role.ADMIN as const,
     };
     await this.usersService.create(userData);
     return {
@@ -60,7 +61,7 @@ export class AuthService {
     const userData = {
       ...registerUserDto,
       password: hashedPassword,
-      role: 'user' as const,
+      role: Role.USER as const,
       admin: { id: admin.id }, // Asignar la relación con el admin
     };
 
@@ -72,7 +73,9 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const user = await this.usersService.findOneByEmail(loginDto.email);
+    const user = await this.usersService.findByEmailWithPassword(
+      loginDto.email,
+    );
     if (!user) {
       throw new UnauthorizedException('El correo no es valido');
     }

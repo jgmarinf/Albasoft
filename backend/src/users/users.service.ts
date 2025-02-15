@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon from 'argon2';
+import { Role } from 'src/common/enums/role.enum';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -27,7 +28,14 @@ export class UsersService {
 
   async findAdminByEmail(email: string) {
     return await this.userRepository.findOne({
-      where: { email, role: 'admin' },
+      where: { email, role: Role.ADMIN },
+    });
+  }
+
+  async findByEmailWithPassword(email: string) {
+    return await this.userRepository.findOne({
+      where: { email },
+      select: ['id', 'email', 'password', 'role'],
     });
   }
 
