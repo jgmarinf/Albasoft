@@ -32,6 +32,7 @@ export class ProjectsController {
   }
 
   @Get('admin')
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   async getAdminProjects(
     @Req()
@@ -41,6 +42,7 @@ export class ProjectsController {
   }
 
   @Get('user')
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.USER)
   async getUserProjects(
     @Req()
