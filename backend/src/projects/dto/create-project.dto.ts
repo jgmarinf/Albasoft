@@ -13,7 +13,7 @@ export class CreateProjectDto {
 
   @IsString()
   @IsOptional()
-  description: string;
+  description?: string | null;
 
   @IsArray()
   @IsUUID(4, { each: true })

@@ -21,7 +21,7 @@ export class Project {
   name: string;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description: string | null;
 
   // Relación con el admin del proyecto
   @ManyToOne(() => User, (user) => user.projects, { onDelete: 'CASCADE' })
