@@ -1,23 +1,34 @@
-export default function Sidebar({
-  onSelectView,
-}: {
-  onSelectView: (view: "projects" | "users") => void;
-}) {
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+export default function Sidebar() {
+  const pathname = usePathname();
+
   return (
     <div className="w-64 bg-gray-800 min-h-screen p-4">
       <nav className="space-y-2">
-        <button
-          onClick={() => onSelectView("projects")}
-          className="w-full text-left px-4 py-2 text-white hover:bg-gray-700 rounded"
+        <Link
+          href="/dashboard/projects"
+          className={`block w-full text-left px-4 py-2 rounded transition-colors ${
+            pathname === "/dashboard/projects"
+              ? "bg-blue-600 text-white border-l-4 border-blue-400"
+              : "text-gray-300 hover:bg-gray-700"
+          }`}
         >
           Proyectos
-        </button>
-        <button
-          onClick={() => onSelectView("users")}
-          className="w-full text-left px-4 py-2 text-white hover:bg-gray-700 rounded"
+        </Link>
+        <Link
+          href="/dashboard/users"
+          className={`block w-full text-left px-4 py-2 rounded transition-colors ${
+            pathname === "/dashboard/users"
+              ? "bg-blue-600 text-white border-l-4 border-blue-400"
+              : "text-gray-300 hover:bg-gray-700"
+          }`}
         >
           Usuarios
-        </button>
+        </Link>
       </nav>
     </div>
   );

@@ -9,6 +9,7 @@ import {
   type RegisterUserFormData,
 } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -37,9 +38,23 @@ export default function AuthForm({ type, role = "user" }: AuthFormProps) {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log("Datos válidos:", data);
-    // Aquí iría la lógica de envío al backend
+    if (type === "login") {
+      const responseNextAuth = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (responseNextAuth?.error) {
+        console.log(responseNextAuth.error);
+
+        return;
+      }
+      console.log(responseNextAuth);
+      router.push("/dashboard");
+    }
   };
 
   return (
