@@ -1,7 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as argon from 'argon2';
 import { Hashing } from 'src/auth/hashing';
 import { Role } from 'src/common/enums/role.enum';
 import { Repository } from 'typeorm';
@@ -69,13 +73,52 @@ export class UsersService {
     return await this.userRepository.findOne({ where: { id } });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    // Si viene password, lo hasheamos
-    if (updateUserDto.password) {
-      updateUserDto.password = await argon.hash(updateUserDto.password);
+  async update(id: string, updateUserDto: UpdateUserDto, adminId: string) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['admin'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
     }
 
-    return await this.userRepository.update(id, updateUserDto);
+    // Verificar si el usuario pertenece al admin
+    if (user.admin?.id !== adminId) {
+      throw new ForbiddenException(
+        'No tienes permisos para editar este usuario',
+      );
+    }
+
+    // Validar email único si se está actualizando
+    if (updateUserDto.email) {
+      const existingUser = await this.userRepository.findOne({
+        where: { email: updateUserDto.email },
+      });
+      if (existingUser && existingUser.id !== id) {
+        throw new BadRequestException('El correo ya está registrado');
+      }
+    }
+
+    // Limpiar y validar campos
+    const cleanData: Partial<User> = {};
+
+    if (updateUserDto.name !== undefined) {
+      const trimmedName = updateUserDto.name.trim();
+      cleanData.name = trimmedName || user.name;
+    }
+
+    if (updateUserDto.email !== undefined) {
+      const trimmedEmail = updateUserDto.email.trim();
+      cleanData.email = trimmedEmail || user.email;
+    }
+
+    if (updateUserDto.password) {
+      cleanData.password = await Hashing.hashPassword(updateUserDto.password);
+    }
+
+    await this.userRepository.update(id, cleanData);
+    return this.userRepository.findOne({ where: { id } });
   }
 
   remove(id: string) {
