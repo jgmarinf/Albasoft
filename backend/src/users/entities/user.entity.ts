@@ -29,9 +29,9 @@ export class User {
   password: string;
 
   // Relación con admin (self-referencing)
-  @ManyToOne(() => User, (admin) => admin.admins, {})
+  @ManyToOne(() => User, (admin) => admin.admins, { nullable: true })
   @JoinColumn({ name: 'admin_id' })
-  admin: User;
+  admin: User | null;
   @OneToMany(() => User, (user) => user.admin, { onDelete: 'CASCADE' })
   admins: User[];
 

@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Role } from 'src/common/enums/role.enum';
 import { UsersService } from './../users/users.service';
@@ -19,20 +15,12 @@ export class AuthService {
   ) {}
 
   async registerAdmin(registerAdminDto: RegisterAdminDto) {
-    const user = await this.usersService.findOneByEmail(registerAdminDto.email);
-    if (user) {
-      throw new BadRequestException('El correo ya está registrado');
-    }
     if (registerAdminDto.claveSecreta !== 'camilogruñon') {
       throw new UnauthorizedException('La clave secreta no es correcta');
     }
-    const hashedPassword = await Hashing.hashPassword(
-      registerAdminDto.password,
-    );
     const userData = {
       ...registerAdminDto,
-      password: hashedPassword,
-      role: Role.ADMIN as const,
+      role: Role.ADMIN,
     };
     await this.usersService.create(userData);
     return {
@@ -42,11 +30,6 @@ export class AuthService {
   }
 
   async registerUser(registerUserDto: RegisterUserDto) {
-    const user = await this.usersService.findOneByEmail(registerUserDto.email);
-    if (user) {
-      throw new BadRequestException('El correo ya está registrado');
-    }
-    const hashedPassword = await Hashing.hashPassword(registerUserDto.password);
     // Buscar al administrador por su email
     const admin = await this.usersService.findAdminByEmail(
       registerUserDto.adminEmail,
@@ -60,13 +43,11 @@ export class AuthService {
 
     const userData = {
       ...registerUserDto,
-      password: hashedPassword,
-      role: Role.USER as const,
       admin: { id: admin.id }, // Asignar la relación con el admin
     };
 
-    const adminId = admin.id; // Obtener ID del admin desde el usuario autenticado
-    await this.usersService.create(userData, adminId);
+    // Obtener ID del admin desde el usuario autenticado
+    await this.usersService.create(userData);
     return {
       email: registerUserDto.email,
       message: 'Usuario creado correctamente',

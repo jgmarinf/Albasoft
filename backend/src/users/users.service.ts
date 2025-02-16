@@ -24,7 +24,7 @@ export class UsersService {
   // Simulación temporal de ID de administrador (quemado)
   // private readonly TEMP_ADMIN_ID = '0119b370-0653-4506-98cc-1728aee0b933'; // Reemplazar con un UUID válido
 
-  async create(createUserDto: CreateUserDto, adminId?: string) {
+  async create(createUserDto: CreateUserDto) {
     const user = await this.userRepository.findOne({
       where: { email: createUserDto.email },
     });
@@ -34,10 +34,9 @@ export class UsersService {
 
     const hashedPassword = await Hashing.hashPassword(createUserDto.password);
     const userData = {
+      role: Role.USER,
       ...createUserDto,
       password: hashedPassword,
-      role: Role.USER,
-      adminId: adminId,
     };
     const userEntity = this.userRepository.create(userData);
     await this.userRepository.save(userEntity);
@@ -121,7 +120,24 @@ export class UsersService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} user`;
+  async remove(id: string, adminId: string) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['admin'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    // Verificar si el usuario pertenece al admin que intenta eliminarlo
+    if (user.admin?.id !== adminId) {
+      throw new ForbiddenException(
+        'No tienes permisos para eliminar este usuario',
+      );
+    }
+
+    await this.userRepository.remove(user);
+    return { message: 'Usuario eliminado correctamente' };
   }
 }

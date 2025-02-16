@@ -29,7 +29,11 @@ export class UsersController {
     @Req()
     req: Request & { user: { sub: string; email: string; role: string } },
   ) {
-    return this.usersService.create(createUserDto, req.user.sub);
+    const userData = {
+      ...createUserDto,
+      admin: { id: req.user.sub }, // Asignar la relación con el admin
+    };
+    return this.usersService.create(userData);
   }
 
   @Get()
@@ -54,7 +58,12 @@ export class UsersController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  async remove(
+    @Param('id') id: string,
+    @Req() req: Request & { user: { sub: string } },
+  ) {
+    return await this.usersService.remove(id, req.user.sub);
   }
 }
