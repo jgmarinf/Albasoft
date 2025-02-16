@@ -13,8 +13,6 @@ export default function AdminDashboard({ role }: { role: string }) {
     "projects"
   );
   const [editingItem, setEditingItem] = useState<null | any>(null);
-  const [isAddingUsers, setIsAddingUsers] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
   // Datos quemados temporalmente
   const mockProjects = [
@@ -49,12 +47,6 @@ export default function AdminDashboard({ role }: { role: string }) {
     // Aquí conectar con la API
   };
 
-  const handleAddUser = (projectId: number) => {
-    setSelectedProject(projectId);
-    setIsAddingUsers(true);
-    setShowCreateModal(true);
-  };
-
   return (
     <div className="flex">
       <Sidebar onSelectView={setCurrentView} />
@@ -82,7 +74,6 @@ export default function AdminDashboard({ role }: { role: string }) {
                   role={role}
                   onEdit={() => handleEdit(project)}
                   onDelete={() => console.log("Eliminar proyecto", project.id)}
-                  onAddUser={() => handleAddUser(project.id)}
                 />
               ))
             : mockUsers.map((user) => (
@@ -102,30 +93,11 @@ export default function AdminDashboard({ role }: { role: string }) {
         onClose={() => {
           setShowCreateModal(false);
           setEditingItem(null);
-          setIsAddingUsers(false);
         }}
-        type={
-          isAddingUsers
-            ? "add-users"
-            : currentView === "projects"
-            ? "project"
-            : "user"
-        }
+        type={currentView === "projects" ? "project" : "user"}
         isEdit={!!editingItem}
         initialData={editingItem}
-        onSubmit={(data) => {
-          if (isAddingUsers) {
-            console.log(
-              "Usuarios añadidos al proyecto:",
-              selectedProject,
-              data.users
-            );
-            // Lógica para asociar usuarios al proyecto
-          } else {
-            handleSubmit(data);
-          }
-        }}
-        users={isAddingUsers ? mockUsers : undefined}
+        onSubmit={handleSubmit}
       />
     </div>
   );
