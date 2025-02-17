@@ -1,11 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-async function secureFetch(url: string, options: RequestInit) {
-  const backendUrl = process.env.BACKEND_INTERNAL_URL;
-  return fetch(`${backendUrl}${url}`, options);
-}
-
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
@@ -19,14 +14,17 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const res = await secureFetch("/auth/login", {
-          method: "POST",
-          body: JSON.stringify({
-            email: credentials?.email,
-            password: credentials?.password,
-          }),
-          headers: { "Content-Type": "application/json" },
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email: credentials?.email,
+              password: credentials?.password,
+            }),
+            headers: { "Content-Type": "application/json" },
+          }
+        );
         const user = await res.json();
 
         if (user.error) throw user;

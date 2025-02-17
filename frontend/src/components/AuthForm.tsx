@@ -1,6 +1,5 @@
 "use client";
 
-import { registerAdmin, registerUser } from "@/actions/auth";
 import {
   loginSchema,
   registerAdminSchema,
@@ -65,42 +64,34 @@ export default function AuthForm({ type, role = "user" }: AuthFormProps) {
       return;
     }
     if (type === "register") {
-      if (role === "admin") {
-        const result = await registerAdmin({
-          name: data.fullName || "",
-          email: data.email,
-          password: data.password,
-          claveSecreta: data.claveSecreta || "",
+      try {
+        const res = await fetch("/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            role,
+            name: data.fullName,
+            email: data.email,
+            password: data.password,
+            adminEmail: data.adminEmail,
+            claveSecreta: data.claveSecreta,
+          }),
         });
 
-        if (result?.error) {
-          console.log(result.error);
-          return;
-        }
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error);
 
+        // Autenticar después del registro exitoso
         await signIn("credentials", {
           email: data.email,
           password: data.password,
+          redirect: false,
         });
-      }
 
-      if (role === "user") {
-        const result = await registerUser({
-          name: data.fullName || "",
-          email: data.email,
-          password: data.password,
-          adminEmail: data.adminEmail || "",
-        });
-        if (result?.error) {
-          console.log(result.error);
-          return;
-        }
-        await signIn("credentials", {
-          email: data.email,
-          password: data.password,
-        });
+        router.push("/dashboard");
+      } catch (error) {
+        console.error("Registration error:", error);
       }
-      router.push("/dashboard");
     }
   };
 

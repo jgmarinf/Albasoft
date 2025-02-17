@@ -8,16 +8,19 @@ export async function registerAdmin(formData: {
   claveSecreta: string;
 }) {
   try {
-    const res = await fetch(`${process.env.BACKEND_URL}/auth/register/admin`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        claveSecreta: formData.claveSecreta,
-      }),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register/admin`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          claveSecreta: formData.claveSecreta,
+        }),
+      }
+    );
 
     if (!res.ok) throw new Error(await res.text());
 
@@ -37,16 +40,19 @@ export async function registerUser(formData: {
   adminEmail: string;
 }) {
   try {
-    const res = await fetch(`${process.env.BACKEND_URL}/auth/register/user`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        adminEmail: formData.adminEmail,
-      }),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register/user`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          adminEmail: formData.adminEmail,
+        }),
+      }
+    );
 
     if (!res.ok) throw new Error(await res.text());
 
