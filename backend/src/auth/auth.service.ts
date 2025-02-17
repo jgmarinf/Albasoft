@@ -15,7 +15,7 @@ export class AuthService {
   ) {}
 
   async registerAdmin(registerAdminDto: RegisterAdminDto) {
-    if (registerAdminDto.claveSecreta !== 'Camilogruñon1') {
+    if (registerAdminDto.claveSecreta !== 'Albasoft2025') {
       throw new UnauthorizedException('La clave secreta no es correcta');
     }
     const userData = {
