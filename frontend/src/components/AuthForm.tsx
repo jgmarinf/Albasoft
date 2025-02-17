@@ -1,5 +1,6 @@
 "use client";
 
+import { registerAdmin, registerUser } from "@/actions/auth";
 import {
   loginSchema,
   registerAdminSchema,
@@ -65,70 +66,41 @@ export default function AuthForm({ type, role = "user" }: AuthFormProps) {
     }
     if (type === "register") {
       if (role === "admin") {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register/admin`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name: data.fullName,
-              email: data.email,
-              password: data.password,
-              claveSecreta: data.claveSecreta,
-            }),
-          }
-        );
-        const responseAPI = await res.json();
-        if (!res.ok) {
-          console.log(responseAPI.message);
-          return;
-        }
-        const responseNextAuth = await signIn("credentials", {
+        const result = await registerAdmin({
+          name: data.fullName || "",
           email: data.email,
           password: data.password,
-          redirect: false,
+          claveSecreta: data.claveSecreta || "",
         });
-        if (responseNextAuth?.error) {
-          console.log(responseNextAuth.error);
+
+        if (result?.error) {
+          console.log(result.error);
           return;
         }
-        console.log(responseNextAuth);
-        router.push("/dashboard");
-        return;
+
+        await signIn("credentials", {
+          email: data.email,
+          password: data.password,
+        });
       }
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register/user`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: data.fullName,
-            email: data.email,
-            password: data.password,
-            adminEmail: data.adminEmail,
-          }),
+
+      if (role === "user") {
+        const result = await registerUser({
+          name: data.fullName || "",
+          email: data.email,
+          password: data.password,
+          adminEmail: data.adminEmail || "",
+        });
+        if (result?.error) {
+          console.log(result.error);
+          return;
         }
-      );
-      const responseAPI = await res.json();
-      if (!res.ok) {
-        console.log(responseAPI.message);
-        return;
-      }
-      const responseNextAuth = await signIn("credentials", {
-        email: data.email,
-        password: data.password,
-        redirect: false,
-      });
-      if (responseNextAuth?.error) {
-        console.log(responseNextAuth.error);
-        return;
+        await signIn("credentials", {
+          email: data.email,
+          password: data.password,
+        });
       }
       router.push("/dashboard");
-      return;
     }
   };
 
