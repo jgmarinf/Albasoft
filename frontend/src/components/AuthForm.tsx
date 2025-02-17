@@ -19,6 +19,16 @@ type AuthFormProps = {
   role?: "user" | "admin";
 };
 
+type FormData = (
+  | LoginFormData
+  | RegisterUserFormData
+  | RegisterAdminFormData
+) & {
+  fullName?: string;
+  adminEmail?: string;
+  claveSecreta?: string;
+};
+
 export default function AuthForm({ type, role = "user" }: AuthFormProps) {
   const router = useRouter();
 
@@ -34,11 +44,11 @@ export default function AuthForm({ type, role = "user" }: AuthFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData | RegisterUserFormData | RegisterAdminFormData>({
+  } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: FormData) => {
     if (type === "login") {
       const responseNextAuth = await signIn("credentials", {
         email: data.email,

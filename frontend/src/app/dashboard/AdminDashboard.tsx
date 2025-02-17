@@ -1,4 +1,4 @@
-"use client";
+/* "use client";
 
 import CreateModal from "@/components/CreateModal";
 import ProjectCard from "@/components/ProjectCard";
@@ -102,3 +102,4 @@ export default function AdminDashboard({ role }: { role: string }) {
     </div>
   );
 }
+ */

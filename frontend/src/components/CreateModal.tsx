@@ -1,4 +1,4 @@
-"use client";
+/* "use client";
 
 import {
   createProjectSchema,
@@ -172,3 +172,4 @@ export default function CreateModal({
     </div>
   );
 }
+ */
