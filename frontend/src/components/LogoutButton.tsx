@@ -1,5 +1,6 @@
 "use client";
 
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -14,8 +15,7 @@ export default function LogoutButton() {
   if (!mounted) return null;
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    window.dispatchEvent(new Event("storage"));
+    signOut();
     router.push("/auth/login");
   };
 

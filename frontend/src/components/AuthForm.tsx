@@ -39,21 +39,86 @@ export default function AuthForm({ type, role = "user" }: AuthFormProps) {
   });
 
   const onSubmit = async (data: any) => {
-    console.log("Datos válidos:", data);
     if (type === "login") {
       const responseNextAuth = await signIn("credentials", {
         email: data.email,
         password: data.password,
         redirect: false,
       });
-
       if (responseNextAuth?.error) {
         console.log(responseNextAuth.error);
-
         return;
       }
       console.log(responseNextAuth);
       router.push("/dashboard");
+      return;
+    }
+    if (type === "register") {
+      if (role === "admin") {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register/admin`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: data.fullName,
+              email: data.email,
+              password: data.password,
+              claveSecreta: data.claveSecreta,
+            }),
+          }
+        );
+        const responseAPI = await res.json();
+        if (!res.ok) {
+          console.log(responseAPI.message);
+          return;
+        }
+        const responseNextAuth = await signIn("credentials", {
+          email: data.email,
+          password: data.password,
+          redirect: false,
+        });
+        if (responseNextAuth?.error) {
+          console.log(responseNextAuth.error);
+          return;
+        }
+        console.log(responseNextAuth);
+        router.push("/dashboard");
+        return;
+      }
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register/user`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: data.fullName,
+            email: data.email,
+            password: data.password,
+            adminEmail: data.adminEmail,
+          }),
+        }
+      );
+      const responseAPI = await res.json();
+      if (!res.ok) {
+        console.log(responseAPI.message);
+        return;
+      }
+      const responseNextAuth = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+      if (responseNextAuth?.error) {
+        console.log(responseNextAuth.error);
+        return;
+      }
+      router.push("/dashboard");
+      return;
     }
   };
 
