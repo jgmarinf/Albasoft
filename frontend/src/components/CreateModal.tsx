@@ -12,13 +12,13 @@ import {
 } from "@/lib/validations";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 interface CreateModalProps {
   isOpen: boolean;
   onClose: () => void;
   type: "user" | "project";
+  users: UserOption[];
   isEdit?: boolean;
   initialData?: CreateUserFormData | CreateProjectFormData;
   onSubmit: (
@@ -40,6 +40,7 @@ export default function CreateModal({
   isOpen,
   onClose,
   type,
+  users,
   isEdit = false,
   initialData = {
     name: "",
@@ -70,31 +71,6 @@ export default function CreateModal({
         }
       : undefined,
   });
-
-  const [users, setUsers] = useState<UserOption[]>([]);
-
-  useEffect(() => {
-    if (isOpen && type === "project" && !isEdit) {
-      // Datos mock de ejemplo
-      const mockUsers = [
-        { id: "1", name: "Usuario Ejemplo 1", email: "usuario1@ejemplo.com" },
-        { id: "2", name: "Usuario Ejemplo 2", email: "usuario2@ejemplo.com" },
-        { id: "3", name: "Usuario Ejemplo 3", email: "usuario3@ejemplo.com" },
-      ];
-
-      // Intenta cargar usuarios reales, si falla usa los mock
-      fetch("/api/users")
-        .then((res) => {
-          if (!res.ok) throw new Error("Error al cargar usuarios");
-          return res.json();
-        })
-        .then((data) => setUsers(data.length > 0 ? data : mockUsers))
-        .catch((error) => {
-          console.error(error);
-          setUsers(mockUsers);
-        });
-    }
-  }, [isOpen, type, isEdit]);
 
   const handleFormSubmit = (
     data:

@@ -1,11 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { getUsersByAdminId } from "@/lib/actions";
+import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import CreateModal from "./CreateModal";
 
 export default function CreateButton({ type }: { type: "projects" | "users" }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    if (isOpen && type === "projects") {
+      const fetchUsers = async () => {
+        try {
+          const data = await getUsersByAdminId();
+          setUsers(data);
+        } catch (error) {
+          console.error("Error cargando usuarios:", error);
+        }
+      };
+      fetchUsers();
+    }
+  }, [isOpen, type]);
 
   return (
     <>
@@ -20,9 +36,9 @@ export default function CreateButton({ type }: { type: "projects" | "users" }) {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         type={type === "projects" ? "project" : "user"}
+        users={users}
         onSubmit={(data) => {
-          // Lógica de envío aquí
-          console.log(data);
+          console.log("Datos enviados:", data);
           setIsOpen(false);
         }}
       />

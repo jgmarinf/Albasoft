@@ -1,3 +1,38 @@
+"use server";
+
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+
+export async function getUsersByAdminId() {
+  try {
+    const session = await auth();
+    if (!session?.user?.accessToken) {
+      redirect("/auth/login");
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${session.user.accessToken}`,
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Error al obtener usuarios");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getUsers:", error);
+    throw error;
+  }
+}
+
 /* import { cookies } from "next/headers";
 
 export async function getProjectsAdmin() {
