@@ -42,6 +42,7 @@ export const createProjectSchema = z.object({
   description: z
     .string()
     .min(10, "Descripción debe tener al menos 10 caracteres"),
+  assignedUsers: z.array(z.string()).optional(),
 });
 
 // Agregar esquemas de edición
@@ -51,11 +52,11 @@ export const editUserSchema = createUserSchema
     message: "Al menos un campo debe ser modificado",
   });
 
-export const editProjectSchema = createProjectSchema
-  .partial()
-  .refine((data) => Object.values(data).some((value) => value !== undefined), {
-    message: "Al menos un campo debe ser modificado",
-  });
+export const editProjectSchema = z.object({
+  name: z.string().min(3).optional(),
+  description: z.string().min(10).optional(),
+  assignedUsers: z.array(z.string()).optional(),
+});
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterUserFormData = z.infer<typeof registerUserSchema>;
