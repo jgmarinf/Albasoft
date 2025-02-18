@@ -1,32 +1,30 @@
+import type { JWT } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-
-interface UserToken {
-  user?: {
-    role: string;
-  };
-}
 
 export default withAuth(
   function middleware(req) {
     const { pathname } = req.nextUrl;
-    const token = req.nextauth.token as UserToken;
+    const token = req.nextauth.token as JWT;
 
-    // Redirigir usuarios autenticados que intentan acceder a rutas de autenticación
+    // Redirigir autenticados desde auth
     if (pathname.startsWith("/auth") && token) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
-    // Control de acceso basado en roles
+    // Control de roles
     if (pathname.startsWith("/dashboard")) {
       if (!token) return NextResponse.redirect(new URL("/auth/login", req.url));
 
-      if (token.user?.role === "admin") {
+      // Acceso para admin
+      if (token.role === "admin") {
         if (pathname === "/dashboard") {
           return NextResponse.redirect(new URL("/dashboard/projects", req.url));
         }
-      } else if (token.user?.role === "user") {
-        if (pathname.startsWith("/dashboard/")) {
+      }
+      // Restricción para usuarios normales
+      else if (token.role === "user") {
+        if (pathname.startsWith("/dashboard/admin")) {
           return NextResponse.redirect(new URL("/dashboard", req.url));
         }
       }
