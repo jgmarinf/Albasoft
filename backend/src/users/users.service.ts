@@ -64,8 +64,10 @@ export class UsersService {
     });
   }
 
-  async findAll() {
-    return await this.userRepository.find();
+  async findAll(adminId: string) {
+    return await this.userRepository.find({
+      where: { admin: { id: adminId } },
+    });
   }
 
   async findOne(id: string) {

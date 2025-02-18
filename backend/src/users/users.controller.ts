@@ -37,8 +37,13 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  async findAll(
+    @Req()
+    req: Request & { user: { sub: string; email: string; role: string } },
+  ) {
+    return this.usersService.findAll(req.user.sub);
   }
 
   @Get(':id')
