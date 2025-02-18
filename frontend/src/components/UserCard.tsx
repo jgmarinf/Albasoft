@@ -5,7 +5,7 @@ import { FiEdit, FiTrash } from "react-icons/fi";
 export default function UserCard({
   user,
 }: {
-  user: { id: number; name: string; email: string; role: string };
+  user: { id: string; name: string; email: string; role: string };
 }) {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow relative">
