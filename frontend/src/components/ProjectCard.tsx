@@ -27,8 +27,12 @@ export default function ProjectCard({
           </button>
         </div>
       )}
-      <h3 className="text-xl font-semibold mb-2">{project.name}</h3>
-      <p className="text-gray-600">{project.description}</p>
+      <div className="flex flex-col gap-2">
+        <h3 className="text-xl font-semibold mb-2">{project.name}</h3>
+        <p className="text-gray-600 break-words line-clamp-3 overflow-hidden text-ellipsis">
+          {project.description}
+        </p>
+      </div>
     </div>
   );
 }

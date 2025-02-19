@@ -1,6 +1,7 @@
 "use server";
 
 import { auth } from "@/auth";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function getUsersByAdminId() {
@@ -33,43 +34,82 @@ export async function getUsersByAdminId() {
   }
 }
 
-/* import { cookies } from "next/headers";
-
-export async function getProjectsAdmin() {
+export async function createProjects(formData: {
+  name: string;
+  description: string;
+  usersIds: string[];
+}) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("next-auth.session-token");
-
-    if (!token) {
-      console.error("Token no encontrado - Redirigir a login");
-      return [];
+    const session = await auth();
+    if (!session?.user?.accessToken) {
+      redirect("/auth/login");
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/projects/admin`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/projects`,
       {
-        method: "GET",
+        method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${session.user.accessToken}`,
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          name: formData.name,
+          description: formData.description,
+          usersIds: formData.usersIds,
+        }),
       }
     );
 
-    if (response.status === 401) {
-      console.error("Token inválido/expirado - Limpiar cookies");
-      return [];
+    if (!response.ok) {
+      throw new Error("Error al crear el proyecto");
     }
 
-    if (!response.ok) {
-      console.error("Error en la respuesta del servidor");
-      return [];
-    }
+    revalidatePath("/dashboard/projects");
 
     return await response.json();
   } catch (error) {
-    console.error("Error en la solicitud:", error);
-    return [];
+    console.error("Error en createProjects:", error);
+    throw error;
   }
 }
- */
+
+export async function createUsers(formData: {
+  name: string;
+  email: string;
+  password: string;
+}) {
+  try {
+    const session = await auth();
+    if (!session?.user?.accessToken) {
+      redirect("/auth/login");
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session.user.accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Error al crear el usuario");
+    }
+
+    revalidatePath("/dashboard/users");
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error en createUsers:", error);
+    throw error;
+  }
+}

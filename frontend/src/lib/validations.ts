@@ -42,7 +42,7 @@ export const createProjectSchema = z.object({
   description: z
     .string()
     .min(10, "Descripción debe tener al menos 10 caracteres"),
-  assignedUsers: z.array(z.string()).optional(),
+  usersIds: z.array(z.string()).optional(),
 });
 
 // Agregar esquemas de edición

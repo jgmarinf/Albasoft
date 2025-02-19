@@ -43,7 +43,7 @@ export class UsersService {
 
     return {
       email: userData.email,
-      message: 'Administrador creado correctamente',
+      message: 'Usuario creado correctamente',
     };
   }
 

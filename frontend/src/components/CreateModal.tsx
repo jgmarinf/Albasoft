@@ -1,5 +1,6 @@
 "use client";
 
+import { createProjects, createUsers } from "@/lib/actions";
 import {
   createProjectSchema,
   createUserSchema,
@@ -86,8 +87,9 @@ export default function CreateModal({
       formData = {
         name: projectData.name,
         description: projectData.description,
-        assignedUsers: projectData.assignedUsers || [],
+        usersIds: projectData.usersIds || [],
       };
+      createProjects(formData);
     } else {
       const userData = data as CreateUserFormData;
       formData = {
@@ -95,6 +97,7 @@ export default function CreateModal({
         email: userData.email,
         password: userData.password,
       };
+      createUsers(formData);
     }
 
     console.log("Datos enviados:", formData);
