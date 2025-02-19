@@ -197,3 +197,65 @@ export async function editUser(
     throw error;
   }
 }
+
+export async function deleteUser(userId: string) {
+  "use server";
+
+  try {
+    const session = await auth();
+    if (!session?.user?.accessToken) {
+      redirect("/auth/login");
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${session.user.accessToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Error al eliminar el usuario");
+    }
+
+    revalidatePath("/dashboard/users");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en deleteUser:", error);
+    throw error;
+  }
+}
+
+export async function deleteProject(projectId: string) {
+  "use server";
+
+  try {
+    const session = await auth();
+    if (!session?.user?.accessToken) {
+      redirect("/auth/login");
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/projects/${projectId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${session.user.accessToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Error al eliminar el proyecto");
+    }
+
+    revalidatePath("/dashboard/projects");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en deleteProject:", error);
+    throw error;
+  }
+}

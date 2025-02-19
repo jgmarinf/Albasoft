@@ -16,7 +16,7 @@ export default function CreateButton({ type }: { type: "projects" | "users" }) {
           const data = await getUsersByAdminId();
           setUsers(data);
         } catch (error) {
-          console.error("Error cargando usuarios:", error);
+          throw new Error(error as string);
         }
       };
       fetchUsers();
@@ -37,8 +37,7 @@ export default function CreateButton({ type }: { type: "projects" | "users" }) {
         onClose={() => setIsOpen(false)}
         type={type === "projects" ? "project" : "user"}
         users={users}
-        onSubmit={(data) => {
-          console.log("Datos enviados:", data);
+        onSubmit={() => {
           setIsOpen(false);
         }}
       />

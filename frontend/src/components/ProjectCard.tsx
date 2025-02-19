@@ -1,6 +1,6 @@
 "use client";
 
-import { editProject } from "@/lib/actions";
+import { deleteProject, editProject } from "@/lib/actions";
 import { useState } from "react";
 import { FiEdit, FiTrash } from "react-icons/fi";
 import CreateModal from "./CreateModal";
@@ -31,7 +31,15 @@ export default function ProjectCard({
               <FiEdit size={18} />
             </button>
             <button
-              onClick={() => {}}
+              onClick={async () => {
+                if (confirm("¿Está seguro de eliminar este proyecto?")) {
+                  try {
+                    await deleteProject(project.id);
+                  } catch (error) {
+                    console.error("Error al eliminar proyecto:", error);
+                  }
+                }
+              }}
               className="text-red-600 hover:text-red-800 transition-colors"
             >
               <FiTrash size={18} />

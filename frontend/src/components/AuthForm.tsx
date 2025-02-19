@@ -56,10 +56,9 @@ export default function AuthForm({ type, role = "user" }: AuthFormProps) {
         redirect: false,
       });
       if (responseNextAuth?.error) {
-        console.log(responseNextAuth.error);
+        throw new Error(responseNextAuth.error);
         return;
       }
-      console.log(responseNextAuth);
       router.push("/dashboard");
       return;
     }
@@ -90,7 +89,7 @@ export default function AuthForm({ type, role = "user" }: AuthFormProps) {
 
         router.push("/dashboard");
       } catch (error) {
-        console.error("Registration error:", error);
+        throw new Error(error as string);
       }
     }
   };

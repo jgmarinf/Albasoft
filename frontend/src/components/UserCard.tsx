@@ -1,6 +1,6 @@
 "use client";
 
-import { editUser } from "@/lib/actions";
+import { deleteUser, editUser } from "@/lib/actions";
 import { useState } from "react";
 import { FiEdit, FiTrash } from "react-icons/fi";
 import CreateModal from "./CreateModal";
@@ -23,7 +23,15 @@ export default function UserCard({
             <FiEdit size={18} />
           </button>
           <button
-            onClick={() => {}}
+            onClick={async () => {
+              if (confirm("¿Está seguro de eliminar este usuario?")) {
+                try {
+                  await deleteUser(user.id);
+                } catch (error) {
+                  console.error("Error al eliminar usuario:", error);
+                }
+              }
+            }}
             className="text-red-600 hover:text-red-800 transition-colors"
           >
             <FiTrash size={18} />
@@ -45,7 +53,7 @@ export default function UserCard({
         initialData={{
           name: user.name,
           email: user.email,
-          password: "" // No mostrar contraseña actual
+          password: "", // No mostrar contraseña actual
         }}
         onSubmit={async (data) => {
           try {
