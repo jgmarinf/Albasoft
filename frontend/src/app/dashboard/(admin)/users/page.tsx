@@ -21,9 +21,13 @@ export default async function Projects() {
 
   return (
     <ListWrapper type="users" role="admin">
-      {users.map((user: User) => (
-        <UserCard key={user.id} user={user} />
-      ))}
+      {users.length === 0 ? (
+        <div className="text-center py-8">
+          <p className="text-gray-500 text-lg">No tienes usuarios creados</p>
+        </div>
+      ) : (
+        users.map((user: User) => <UserCard key={user.id} user={user} />)
+      )}
     </ListWrapper>
   );
 }

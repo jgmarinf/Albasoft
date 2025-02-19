@@ -82,26 +82,28 @@ export default function CreateModal({
   ) => {
     let formData;
 
-    if (type === "project") {
-      const projectData = data as CreateProjectFormData;
-      formData = {
-        name: projectData.name,
-        description: projectData.description,
-        usersIds: projectData.usersIds || [],
-      };
-      createProjects(formData);
+    if (isEdit) {
+      onSubmit(data);
     } else {
-      const userData = data as CreateUserFormData;
-      formData = {
-        name: userData.name,
-        email: userData.email,
-        password: userData.password,
-      };
-      createUsers(formData);
+      if (type === "project") {
+        const projectData = data as CreateProjectFormData;
+        formData = {
+          name: projectData.name,
+          description: projectData.description,
+          usersIds: projectData.usersIds || [],
+        };
+        createProjects(formData);
+      } else {
+        const userData = data as CreateUserFormData;
+        formData = {
+          name: userData.name,
+          email: userData.email,
+          password: userData.password,
+        };
+        createUsers(formData);
+      }
+      onSubmit(formData);
     }
-
-    console.log("Datos enviados:", formData);
-    onSubmit(formData);
   };
 
   if (!isOpen) return null;
@@ -206,7 +208,7 @@ export default function CreateModal({
                                 <input
                                   type="checkbox"
                                   value={user.id}
-                                  {...register("assignedUsers")}
+                                  {...register("usersIds")}
                                   className="form-checkbox h-4 w-4 text-blue-600"
                                 />
                                 <span>

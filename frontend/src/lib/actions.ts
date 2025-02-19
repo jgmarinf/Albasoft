@@ -113,3 +113,87 @@ export async function createUsers(formData: {
     throw error;
   }
 }
+
+export async function editProject(
+  projectId: string,
+  formData: {
+    name?: string;
+    description?: string;
+    usersIds?: string[];
+  }
+) {
+  try {
+    const session = await auth();
+    if (!session?.user?.accessToken) {
+      redirect("/auth/login");
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/projects/${projectId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${session.user.accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          description: formData.description,
+          usersIds: formData.usersIds,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Error al actualizar el proyecto");
+    }
+
+    revalidatePath("/dashboard/projects");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en editProject:", error);
+    throw error;
+  }
+}
+
+export async function editUser(
+  userId: string,
+  formData: {
+    name?: string;
+    email?: string;
+    password?: string;
+  }
+) {
+  try {
+    const session = await auth();
+    if (!session?.user?.accessToken) {
+      redirect("/auth/login");
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${session.user.accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Error al actualizar el usuario");
+    }
+
+    revalidatePath("/dashboard/users");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en editUser:", error);
+    throw error;
+  }
+}

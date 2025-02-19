@@ -45,18 +45,35 @@ export const createProjectSchema = z.object({
   usersIds: z.array(z.string()).optional(),
 });
 
-// Agregar esquemas de edición
-export const editUserSchema = createUserSchema
-  .partial()
-  .refine((data) => Object.values(data).some((value) => value !== undefined), {
-    message: "Al menos un campo debe ser modificado",
+// Esquema para edición de proyectos
+export const editProjectSchema = z
+  .object({
+    name: z.string().min(3, "Nombre requerido (mín. 3 caracteres)").optional(),
+    description: z
+      .string()
+      .min(10, "Descripción requerida (mín. 10 caracteres)")
+      .optional(),
+    usersIds: z.array(z.string()).optional(),
+  })
+  .refine((data) => Object.values(data).some((v) => v !== undefined), {
+    message: "Debes modificar al menos un campo",
   });
 
-export const editProjectSchema = z.object({
-  name: z.string().min(3).optional(),
-  description: z.string().min(10).optional(),
-  assignedUsers: z.array(z.string()).optional(),
-});
+// Esquema para edición de usuarios
+export const editUserSchema = z
+  .object({
+    name: z.string().min(3, "Nombre requerido (mín. 3 caracteres)").optional(),
+    email: z.string().email("Email inválido").optional(),
+    password: z
+      .union([z.string().min(8, "Mínimo 8 caracteres"), z.literal("")])
+      .optional(),
+  })
+  .refine(
+    (data) => Object.values(data).some((v) => v !== undefined && v !== ""),
+    {
+      message: "Debes modificar al menos un campo",
+    }
+  );
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterUserFormData = z.infer<typeof registerUserSchema>;

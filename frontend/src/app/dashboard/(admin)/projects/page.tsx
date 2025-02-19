@@ -25,8 +25,8 @@ export default async function Projects() {
   return (
     <ListWrapper type="projects" role={session.user.role}>
       {projects.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          No tienes proyectos asociados
+        <div className="text-center py-8">
+          <p className="text-gray-500 text-lg">No tienes proyectos asociados</p>
         </div>
       ) : (
         projects.map((project: Project) => (
