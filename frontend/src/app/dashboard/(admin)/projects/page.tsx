@@ -11,7 +11,7 @@ export default async function Projects() {
   }
   const token = session.user.accessToken;
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/projects/admin`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/projects/admin?includeUsers=true`,
     {
       cache: "no-store", // Evitar cacheo para datos frescos
       headers: {

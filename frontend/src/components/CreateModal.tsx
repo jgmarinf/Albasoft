@@ -50,7 +50,7 @@ export default function CreateModal({
   },
   onSubmit,
 }: CreateModalProps) {
-  const { register, handleSubmit, reset } = useForm<
+  const { register, handleSubmit, reset, watch, setValue } = useForm<
     | CreateUserFormData
     | CreateProjectFormData
     | EditUserFormData
@@ -69,6 +69,9 @@ export default function CreateModal({
       ? {
           ...initialData,
           password: "",
+          ...(type === "project" && {
+            usersIds: (initialData as CreateProjectFormData).usersIds || [],
+          }),
         }
       : undefined,
   });
@@ -104,6 +107,14 @@ export default function CreateModal({
       }
       onSubmit(formData);
     }
+  };
+
+  const handleCheckboxChange = (userId: string, isChecked: boolean) => {
+    const currentIds = watch("usersIds") || [];
+    const newIds = isChecked
+      ? [...currentIds, userId]
+      : currentIds.filter((id) => id !== userId);
+    setValue("usersIds", newIds);
   };
 
   if (!isOpen) return null;
@@ -200,22 +211,33 @@ export default function CreateModal({
 
                         <PopoverPanel className="absolute z-50 w-full mt-1 bg-white border rounded shadow-lg max-h-60 overflow-auto">
                           <div className="p-2 space-y-1">
-                            {users.map((user) => (
-                              <label
-                                key={user.id}
-                                className="flex items-center space-x-2 p-2 hover:bg-gray-100 cursor-pointer"
-                              >
-                                <input
-                                  type="checkbox"
-                                  value={user.id}
-                                  {...register("usersIds")}
-                                  className="form-checkbox h-4 w-4 text-blue-600"
-                                />
-                                <span>
-                                  {user.name} ({user.email})
-                                </span>
-                              </label>
-                            ))}
+                            {users.map((user) => {
+                              const isChecked = watch("usersIds")?.includes(
+                                user.id
+                              );
+                              return (
+                                <label
+                                  key={user.id}
+                                  className="flex items-center space-x-2 p-2 hover:bg-gray-100 cursor-pointer"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    value={user.id}
+                                    checked={isChecked}
+                                    onChange={(e) =>
+                                      handleCheckboxChange(
+                                        user.id,
+                                        e.target.checked
+                                      )
+                                    }
+                                    className="form-checkbox h-4 w-4 text-blue-600"
+                                  />
+                                  <span>
+                                    {user.name} ({user.email})
+                                  </span>
+                                </label>
+                              );
+                            })}
                           </div>
                         </PopoverPanel>
                       </>

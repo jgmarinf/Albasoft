@@ -47,12 +47,14 @@ export class ProjectsService {
   async findAdminProjects(adminId: string) {
     return this.projectRepository.find({
       where: { admin: { id: adminId } },
+      relations: ['users'],
     });
   }
 
   async findUserProjects(userId: string) {
     return this.projectRepository.find({
       where: { users: { id: userId } },
+      relations: ['users'],
     });
   }
 
