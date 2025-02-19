@@ -31,7 +31,7 @@ interface CreateModalProps {
   ) => void;
 }
 
-interface UserOption {
+export interface UserOption {
   id: string;
   name: string;
   email: string;
@@ -170,7 +170,7 @@ export default function CreateModal({
                 />
               </div>
 
-              {type === "project" && !isEdit && (
+              {type === "project" && (
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-1">
                     Usuarios asignados

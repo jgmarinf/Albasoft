@@ -1,9 +1,9 @@
 "use client";
 
-import { deleteProject, editProject } from "@/lib/actions";
-import { useState } from "react";
+import { deleteProject, editProject, getUsersByAdminId } from "@/lib/actions";
+import { useEffect, useState } from "react";
 import { FiEdit, FiTrash } from "react-icons/fi";
-import CreateModal from "./CreateModal";
+import CreateModal, { UserOption } from "./CreateModal";
 
 export default function ProjectCard({
   project,
@@ -18,6 +18,20 @@ export default function ProjectCard({
   role: string;
 }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [users, setUsers] = useState<UserOption[]>([]);
+  useEffect(() => {
+    if (isEditModalOpen) {
+      const fetchUsers = async () => {
+        try {
+          const data = await getUsersByAdminId();
+          setUsers(data);
+        } catch (error) {
+          throw new Error(error as string);
+        }
+      };
+      fetchUsers();
+    }
+  }, [isEditModalOpen]);
 
   return (
     <>
@@ -58,7 +72,7 @@ export default function ProjectCard({
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         type="project"
-        users={[]} // O cargar usuarios si es necesario
+        users={users} // O cargar usuarios si es necesario
         isEdit={true}
         initialData={{
           name: project.name,
