@@ -21,5 +21,11 @@
       // pending configuration, probably with stylelint
     }
   },
+  "[markdown]": {
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    }
+  },
   "cSpell.words": ["Linkedin", "tailwindcss", "turbopack", "zustand"]
 }
