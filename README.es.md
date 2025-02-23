@@ -62,14 +62,30 @@ Este proyecto es una aplicación full-stack para la gestión de proyectos y usua
 ```
 .
 ├── backend/            # NestJS API
-│   ├── src/            # Source code
-│   ├── test/           # Tests
+│   ├── src/            # Código fuente
+│   ├── test/           # Pruebas
 │   └── ...            
-├── frontend/           # Next.js application
-│   ├── src/            # Source code
+├── frontend/           # Aplicación Next.js
+│   ├── src/            # Código fuente
 │   └── ...            
-└── README.md           # This file
+└── README.md           # Este archivo
 ```
+
+## Configuración de la Base de Datos
+
+La base de datos debe contener las siguientes tablas:
+
+- **Usuarios**: Almacena la información de los usuarios, como nombre, correo electrónico, y rol.
+- **Proyectos**: Almacena los detalles de los proyectos, como nombre y descripción.
+- **Relación Usuarios-Proyectos**: Una tabla relacional que conecta usuarios con proyectos, permitiendo que un usuario pueda estar asociado a múltiples proyectos y viceversa.
+
+### Relaciones
+
+- Un usuario puede ser administrador de varios proyectos.
+- Un proyecto puede tener múltiples usuarios asociados.
+- Las configuraciones del ORM en el backend (`src/users/entities/user.entity.ts` y `src/projects/entities/project.entity.ts`) definen estas relaciones usando TypeORM.
+
+Puedes utilizar tu propia base de datos PostgreSQL para ejecutar el proyecto localmente. Asegúrate de que las tablas y relaciones estén configuradas correctamente según las entidades definidas en el backend.
 
 ## Despliegue en Producción
 
