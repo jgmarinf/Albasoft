@@ -102,7 +102,7 @@ export default function AuthForm({ type, role = "user" }: AuthFormProps) {
             onClick={() => router.push("/auth/register/user")}
             className={`px-4 py-2 rounded-md ${
               role === "user"
-                ? "bg-blue-500 text-white"
+                ? "bg-[#132d60] text-white"
                 : "bg-gray-200 text-gray-700"
             }`}
           >
@@ -112,7 +112,7 @@ export default function AuthForm({ type, role = "user" }: AuthFormProps) {
             onClick={() => router.push("/auth/register/admin")}
             className={`px-4 py-2 rounded-md ${
               role === "admin"
-                ? "bg-blue-500 text-white"
+                ? "bg-[#132d60] text-white"
                 : "bg-gray-200 text-gray-700"
             }`}
           >
@@ -223,7 +223,7 @@ export default function AuthForm({ type, role = "user" }: AuthFormProps) {
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
+          className="w-full bg-[#132d60] text-white py-2 px-4 rounded-md hover:bg-blue-800 transition-colors"
         >
           {type === "login" ? "Ingresar" : "Completar registro"}
         </button>
@@ -235,7 +235,7 @@ export default function AuthForm({ type, role = "user" }: AuthFormProps) {
             ¿No tienes cuenta?{" "}
             <Link
               href="/auth/register/user"
-              className="text-blue-500 hover:underline"
+              className="text-[#132d60] hover:underline"
             >
               Regístrate aquí
             </Link>
@@ -243,7 +243,7 @@ export default function AuthForm({ type, role = "user" }: AuthFormProps) {
         ) : (
           <>
             ¿Ya tienes cuenta?{" "}
-            <Link href="/auth/login" className="text-blue-500 hover:underline">
+            <Link href="/auth/login" className="text-[#132d60] hover:underline">
               Inicia sesión aquí
             </Link>
           </>

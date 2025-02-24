@@ -1,10 +1,18 @@
-"use client";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import LogoutButton from "./LogoutButton";
 
-import LogoutButton from "@/components/LogoutButton";
+export default async function Navbar() {
+  const session = await auth();
+  if (!session) {
+    redirect("/auth/login");
+  }
 
-export default function Navbar() {
   return (
-    <nav className="bg-gray-800 p-4 flex justify-end">
+    <nav className="bg-[#132d60] p-4 flex justify-between items-center">
+      <p className="text-white">
+        Bienvenido {session.user.name || session.user.email}
+      </p>
       <LogoutButton />
     </nav>
   );
